@@ -9,7 +9,7 @@ using namespace std;
 using namespace ege;
 
 namespace LifeGamev3 {
-    LifeGamev3::LifeGamev3(unsigned row, unsigned col, unsigned cell_size, unsigned density) :
+    LifeGamev3::LifeGamev3(unsigned row, unsigned col, unsigned cell_size, unsigned density, int speed, int step) :
         myRandom(clock()),
         universe(row, vector<RGB_>(col)),
         _universe(row, std::vector<RGB_>(col)),
@@ -19,7 +19,8 @@ namespace LifeGamev3 {
         GRAPH_HEIGHT{ row * cell_size + FONT_SIZE },
         GRAPH_WIDTH{ col * cell_size },
         DENSITY{ density },
-        SPEED{ 30 } {
+        SPEED{ speed },
+        STEP{ step } {
         ShowWindow(GetConsoleWindow(), SW_HIDE);
         init(universe);
         _universe = universe;
@@ -120,11 +121,11 @@ namespace LifeGamev3 {
     inline void LifeGamev3::changeSetting(char cmd) {
         switch (cmd) {
             case FASTER:
-                ++SPEED;
+                ++STEP;
                 break;
 
             case SLOWER:
-                --SPEED;
+                --STEP;
                 break;
 
             case DOUBLE:
@@ -145,13 +146,11 @@ namespace LifeGamev3 {
     }
 
     inline void LifeGamev3::die(const int x, const int y, unsigned color) {
-        //      (*p_universe)[y][x].rgb[color] -= min((*p_universe)[y][x].rgb[color], 4);
-        (*p_universe)[y][x].rgb[color] /= 2;
+        (*p_universe)[y][x].rgb[color] -= min((*p_universe)[y][x].rgb[color], STEP);
     }
 
     inline void LifeGamev3::reAlive(const int x, const int y, unsigned color) {
-        //      (*p_universe)[y][x].rgb[color] += min(255 - (*p_universe)[y][x].rgb[color], 4);
-        (*p_universe)[y][x].rgb[color] *= 2;
+        (*p_universe)[y][x].rgb[color] += min(255 - (*p_universe)[y][x].rgb[color], STEP);
     }
 
     inline void LifeGamev3::render() {
@@ -171,6 +170,7 @@ namespace LifeGamev3 {
         setfontbkcolor(EGERGB(0x00, 0x00, 0x00));
         setfont(FONT_SIZE, 0, "Consolas");
         std::string fps = "current fps: " + std::to_string(SPEED);
+        fps += "  step: " + std::to_string(STEP);
         fps += "        powered by Chen Ji :)";
         outtextxy(0, 12 * ROW, fps.c_str());
     }

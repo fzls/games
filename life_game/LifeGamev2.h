@@ -9,7 +9,7 @@ namespace LifeGamev2 {
     class LifeGamev2 {
         typedef unsigned Grayscale;
       public:
-        LifeGamev2(unsigned row = 53, unsigned col = 80, unsigned cell_size = 12, unsigned density = 50);
+        LifeGamev2(unsigned row = 53, unsigned col = 80, unsigned cell_size = 12, unsigned density = 50, int speed = 30, int step = 4);
         ~LifeGamev2();
         void play();
       private:
@@ -45,7 +45,7 @@ namespace LifeGamev2 {
         const unsigned int GRAPH_HEIGHT;//24 space used to show fps
         const unsigned int GRAPH_WIDTH;
         const unsigned int DENSITY;
-        int SPEED;
+        int SPEED, STEP;
         enum Setting {
             FASTER = '=',
             SLOWER = '-',

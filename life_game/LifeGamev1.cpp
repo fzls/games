@@ -9,7 +9,7 @@ using namespace std;
 using namespace ege;
 
 namespace LifeGamev1 {
-    LifeGamev1::LifeGamev1(unsigned row, unsigned col, unsigned cell_size, unsigned density) :
+    LifeGamev1::LifeGamev1(unsigned row, unsigned col, unsigned cell_size, unsigned density, int speed) :
         myRandom(clock()),
         universe(row, vector<bool>(col, false)),
         _universe(row, std::vector<bool>(col, false)),
@@ -19,7 +19,7 @@ namespace LifeGamev1 {
         GRAPH_HEIGHT{row * cell_size + FONT_SIZE },
         GRAPH_WIDTH{col * cell_size},
         DENSITY{density},
-        SPEED{ 30 } {
+        SPEED{ speed } {
         ShowWindow(GetConsoleWindow(), SW_HIDE);
         init(universe);
         _universe = universe;

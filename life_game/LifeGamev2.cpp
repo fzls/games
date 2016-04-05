@@ -9,7 +9,7 @@ using namespace std;
 using namespace ege;
 
 namespace LifeGamev2 {
-    LifeGamev2::LifeGamev2(unsigned row, unsigned col, unsigned cell_size, unsigned density) :
+    LifeGamev2::LifeGamev2(unsigned row, unsigned col, unsigned cell_size, unsigned density, int speed, int step) :
         myRandom(clock()),
         universe(row, vector<Grayscale>(col)),
         _universe(row, std::vector<Grayscale>(col)),
@@ -19,7 +19,8 @@ namespace LifeGamev2 {
         GRAPH_HEIGHT{ row * cell_size + FONT_SIZE },
         GRAPH_WIDTH{ col * cell_size },
         DENSITY{ density },
-        SPEED{ 30 } {
+        SPEED{ speed },
+        STEP{ step } {
         ShowWindow(GetConsoleWindow(), SW_HIDE);
         init(universe);
         _universe = universe;
@@ -105,11 +106,11 @@ namespace LifeGamev2 {
     inline void LifeGamev2::changeSetting(char cmd) {
         switch (cmd) {
             case FASTER:
-                ++SPEED;
+                ++STEP;
                 break;
 
             case SLOWER:
-                --SPEED;
+                --STEP;
                 break;
 
             case DOUBLE:
@@ -130,11 +131,11 @@ namespace LifeGamev2 {
     }
 
     inline void LifeGamev2::die(const int x, const int y) {
-        (*p_universe)[y][x] -= min((*p_universe)[y][x], 4);
+        (*p_universe)[y][x] -= min((*p_universe)[y][x], STEP);
     }
 
     inline void LifeGamev2::reAlive(const int x, const int y) {
-        (*p_universe)[y][x] += min(255 - (*p_universe)[y][x], 4);
+        (*p_universe)[y][x] += min(255 - (*p_universe)[y][x], STEP);
     }
 
     inline void LifeGamev2::render() {
@@ -152,6 +153,7 @@ namespace LifeGamev2 {
         setfontbkcolor(EGERGB(0x00, 0x00, 0x00));
         setfont(FONT_SIZE, 0, "Consolas");
         std::string fps = "current fps: " + std::to_string(SPEED);
+        fps += "  step: " + std::to_string(STEP);
         fps += "        powered by Chen Ji :)";
         outtextxy(0, 12 * ROW, fps.c_str());
     }

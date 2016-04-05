@@ -13,7 +13,7 @@ namespace LifeGamev3 {
     class LifeGamev3 {
         typedef unsigned Color;
       public:
-        LifeGamev3(unsigned row = 53, unsigned col = 80, unsigned cell_size = 12, unsigned density = 50);
+        LifeGamev3(unsigned row = 53, unsigned col = 80, unsigned cell_size = 12, unsigned density = 50, int speed = 30, int step = 4);
         ~LifeGamev3();
         void play();
       private:
@@ -59,7 +59,7 @@ namespace LifeGamev3 {
         const unsigned int GRAPH_HEIGHT;//24 space used to show fps
         const unsigned int GRAPH_WIDTH;
         const unsigned int DENSITY;
-        int SPEED;
+        int SPEED, STEP;
         enum Setting {
             FASTER = '=',
             SLOWER = '-',

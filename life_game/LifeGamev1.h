@@ -8,7 +8,7 @@
 namespace LifeGamev1 {
     class LifeGamev1 {
       public:
-        LifeGamev1(unsigned row = 53, unsigned col = 80, unsigned cell_size = 12, unsigned density = 50);
+        LifeGamev1(unsigned row = 53, unsigned col = 80, unsigned cell_size = 12, unsigned density = 50, int speed = 30);
         ~LifeGamev1();
         void play();
       private:

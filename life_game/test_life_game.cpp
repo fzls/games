@@ -48,8 +48,17 @@ using namespace std;
 
 const int INF = 0x7FFFFFFF;
 
-unsigned row = 53, col = 80, cell_size = 12, density = 50;
-
+unsigned row = 53,
+         col = 80,
+         cell_size = 12,
+         density = 50,
+         game_mode = 1;
+int speed = 30,
+    step = 4;
+vector<unsigned> modes;
+const unsigned BLACK_WHITE = 1,
+               GREY = 2,
+               COLORFUL = 3;
 void prompt_if_change_setting() {
     string menu =
         "|----------------------------------------------------|\n"
@@ -60,6 +69,9 @@ void prompt_if_change_setting() {
         "|   2->col                                           |\n"
         "|   3->cell_size                                     |\n"
         "|   4->density                                       |\n"
+        "|   5->init_speed                                    |\n"
+        "|   6->die_step                                      |\n"
+        "|   7->game mode                                     |\n"
         "|----------------------------------------------------|\n"
         " your choice: ";
     char cmd;
@@ -89,6 +101,25 @@ void prompt_if_change_setting() {
                 cout << "density now is 50(%), enter your version : "; cin >> density;
                 break;
 
+            case '5':
+                cout << "speed now is 30 fps, enter your version : "; cin >> speed;
+                break;
+
+            case '6':
+                cout << "die speed now is 4, enter your version : "; cin >> step;
+                break;
+
+            case '7':
+                cout << "game mode now is 1(black and white),\n"
+                     "the other is 2(grey ver), 3(colorful ver)\n"
+                     "enter your version : "; cin >> game_mode;
+
+                if(find(modes.begin(), modes.end(), game_mode) == modes.end()) {
+                    cout << "no such game mode\n";
+                }
+
+                break;
+
             default:
                 cout << "wrong argument\n";
                 break;
@@ -97,10 +128,19 @@ void prompt_if_change_setting() {
 }
 
 int main() {
+    modes.push_back(BLACK_WHITE); modes.push_back(GREY); modes.push_back(COLORFUL);
     prompt_if_change_setting();
-    //    LifeGamev1::LifeGamev1 game(row, col, cell_size, density);
-    //    LifeGamev2::LifeGamev2 game(row, col, cell_size, density);
-    LifeGamev3::LifeGamev3 game(row, col, cell_size, density);
-    game.play();
+
+    if (game_mode == BLACK_WHITE) {
+        LifeGamev1::LifeGamev1 game(row, col, cell_size, density, speed);
+        game.play();
+    } else if (game_mode == GREY) {
+        LifeGamev2::LifeGamev2 game(row, col, cell_size, density, speed, step);
+        game.play();
+    } else if (game_mode == COLORFUL) {
+        LifeGamev3::LifeGamev3 game(row, col, cell_size, density, speed, step);
+        game.play();
+    }
+
     return 0;
 }
