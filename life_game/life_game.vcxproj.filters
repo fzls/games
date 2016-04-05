@@ -24,12 +24,18 @@
     <ClCompile Include="LifeGamev2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="LifeGamev3.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LifeGamev1.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="LifeGamev2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LifeGamev3.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

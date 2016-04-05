@@ -9,22 +9,18 @@ using namespace std;
 using namespace ege;
 
 namespace LifeGamev1 {
-
-    //useful constants
-    const int HEIGHT = 51;
-    const int WIDTH = 80;
-    const int GRAPH_HEIGHT = HEIGHT * 12 + 24;//24 space used to show fps
-    const int GRAPH_WIDTH = WIDTH * 12;
-    int DENSITY = 2;
-    int SPEED = 30;
-    const char FASTER = '=',
-               SLOWER = '-',
-               DOUBLE = '.',
-               HALF = '/';
-    LifeGamev1::LifeGamev1() :
-        universe(HEIGHT, vector<bool>(WIDTH, false)),
-        _universe(HEIGHT, std::vector<bool>(WIDTH, false)),
-        myRandom(clock()) {
+    LifeGamev1::LifeGamev1(unsigned row, unsigned col, unsigned cell_size, unsigned density) :
+        myRandom(clock()),
+        universe(row, vector<bool>(col, false)),
+        _universe(row, std::vector<bool>(col, false)),
+        FONT_SIZE{ 24 },
+        ROW{row},
+        COL{col},
+        GRAPH_HEIGHT{row * cell_size + FONT_SIZE },
+        GRAPH_WIDTH{col * cell_size},
+        DENSITY{density},
+        SPEED{ 30 } {
+        ShowWindow(GetConsoleWindow(), SW_HIDE);
         init(universe);
         _universe = universe;
         puniverse = &universe;
@@ -52,8 +48,8 @@ namespace LifeGamev1 {
     }
 
     inline void LifeGamev1::evolve() {
-        for (int y = 0; y < HEIGHT; ++y)
-            for (int x = 0; x < WIDTH; ++x) {
+        for (unsigned y = 0; y < ROW; ++y)
+            for (unsigned x = 0; x < COL; ++x) {
                 evolve(x, y);
             }
 
@@ -71,13 +67,9 @@ namespace LifeGamev1 {
     }
 
     inline void LifeGamev1::init(std::vector<std::vector<bool>> &universe) {
-        std::cout << "input the density of the game, eg: 3 means 1/3 is alive, which is black\n";
-        std::cin >> DENSITY;
-        ShowWindow(GetConsoleWindow(), SW_HIDE);
-
         for (auto &line : universe) {
             for (auto &u : line) {
-                u = myRandom() % DENSITY == 0;
+                u = myRandom() % 100 < DENSITY;
             }
         }
     }
@@ -91,7 +83,7 @@ namespace LifeGamev1 {
                     continue;
                 }
 
-                if (isAlive(mod(x + dx, WIDTH), mod(y + dy, HEIGHT))) {
+                if (isAlive(mod(x + dx, COL), mod(y + dy, ROW))) {
                     ++result;
                 }
             }
@@ -142,8 +134,8 @@ namespace LifeGamev1 {
         auto WHITE = EGERGB(0xFF, 0xFF, 0xFF);
         auto BLACK = EGERGB(0x0, 0x0, 0x0);
 
-        for (int y = 0; y < HEIGHT; ++y)
-            for (int x = 0; x < WIDTH; ++x) {
+        for (unsigned y = 0; y < ROW; ++y)
+            for (unsigned x = 0; x < COL; ++x) {
                 setfillcolor((*puniverse)[y][x] ? BLACK : WHITE);
                 bar(12 * x, 12 * y, 12 * x + 12, 12 * y + 12);
                 //              (xl, yt, xr, yb);
@@ -151,9 +143,9 @@ namespace LifeGamev1 {
 
         setcolor(EGERGB(0x0, 0xFF, 0xFF));
         setfontbkcolor(EGERGB(0x00, 0x00, 0x00));
-        setfont(24, 0, "Consolas");
+        setfont(FONT_SIZE, 0, "Consolas");
         std::string fps = "current fps: " + std::to_string(SPEED);
         fps += "        powered by Chen Ji :)";
-        outtextxy(0, 12 * HEIGHT, fps.c_str());
+        outtextxy(0, 12 * ROW, fps.c_str());
     }
 }

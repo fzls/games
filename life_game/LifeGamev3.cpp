@@ -1,6 +1,6 @@
 #define SHOW_CONSOLE
 //* ★如果需要显示控制台窗口，请在包含本文件的前面加一行define SHOW_CONSOLE
-#include "LifeGamev2.h"
+#include "LifeGamev3.h"
 #include <iostream>
 #include <ctime>
 #include <string>
@@ -8,11 +8,11 @@
 using namespace std;
 using namespace ege;
 
-namespace LifeGamev2 {
-    LifeGamev2::LifeGamev2(unsigned row, unsigned col, unsigned cell_size, unsigned density) :
+namespace LifeGamev3 {
+    LifeGamev3::LifeGamev3(unsigned row, unsigned col, unsigned cell_size, unsigned density) :
         myRandom(clock()),
-        universe(row, vector<Grayscale>(col)),
-        _universe(row, std::vector<Grayscale>(col)),
+        universe(row, vector<RGB_>(col)),
+        _universe(row, std::vector<RGB_>(col)),
         FONT_SIZE{ 24 },
         ROW{ row },
         COL{ col },
@@ -30,11 +30,11 @@ namespace LifeGamev2 {
         setbkcolor(EGERGB(0xaa, 0xaa, 0xaa));
     }
 
-    LifeGamev2::~LifeGamev2() {
+    LifeGamev3::~LifeGamev3() {
         closegraph();
     }
 
-    void LifeGamev2::play() {
+    void LifeGamev3::play() {
         for (; is_run(); delay_fps(SPEED)) {
             if (kbhit()) {
                 changeSetting(getch());
@@ -47,7 +47,7 @@ namespace LifeGamev2 {
         }
     }
 
-    inline void LifeGamev2::evolve() {
+    inline void LifeGamev3::evolve() {
         for (unsigned y = 0; y < ROW; ++y)
             for (unsigned x = 0; x < COL; ++x) {
                 evolve(x, y);
@@ -56,31 +56,46 @@ namespace LifeGamev2 {
         swap(puniverse, p_universe);
     }
 
-    inline void LifeGamev2::evolve(const int x, const int y) {
-        int n = neighbour(x, y);
+    inline void LifeGamev3::evolve(const int x, const int y) {
+        evolve(x, y, R);
+        evolve(x, y, G);
+        evolve(x, y, B);
+    }
 
-        if (isAlive(x, y)) {
-            if (n <= 1 || n >= 4) { die(x, y); } else { reAlive(x, y); }
+    inline void LifeGamev3::evolve(const int x, const int y, unsigned color) {
+        int n = neighbour(x, y, color);
+
+        if (isAlive(x, y, color)) {
+            if (n <= 1 || n >= 4) { die(x, y, color); } else { reAlive(x, y, color); }
         } else {
-            if (n == 3) { reAlive(x, y); } else { die(x, y); }
+            if (n == 3) { reAlive(x, y, color); } else { die(x, y, color); }
         }
     }
 
-    inline void LifeGamev2::init(std::vector<std::vector<Grayscale>> &universe) {
+    inline void LifeGamev3::init(std::vector<std::vector<RGB_>> &universe) {
         int cnt = 0;
+        Color r, g, b;
 
         for (auto &line : universe) {
             for (auto &u : line) {
-                u = myRandom() % 128;
+                r = myRandom() % 128;//default alive
+                g = myRandom() % 128;
+                b = myRandom() % 128;
 
-                if(cnt++ >= DENSITY) { u = 128 + myRandom() % 128; } //more white
+                if (cnt++ >= DENSITY) {//100-denisty % is dead
+                    r += 128;
+                    g += 128;
+                    b += 128;
+                }
+
+                u = std::move(RGB_(r, g, b));
 
                 if (cnt == 100) { cnt = 0; }
             }
         }
     }
 
-    inline int LifeGamev2::neighbour(const int x, const int y) {
+    inline int LifeGamev3::neighbour(const int x, const int y, unsigned color) {
         int result = 0;
 
         for (int dx = -1; dx <= 1; ++dx)
@@ -89,7 +104,7 @@ namespace LifeGamev2 {
                     continue;
                 }
 
-                if (isAlive(mod(x + dx, COL), mod(y + dy, ROW))) {
+                if (isAlive(mod(x + dx, COL), mod(y + dy, ROW), color)) {
                     ++result;
                 }
             }
@@ -98,11 +113,11 @@ namespace LifeGamev2 {
     }
 
 
-    inline int LifeGamev2::mod(int n, const int boundary) {
+    inline int LifeGamev3::mod(int n, const int boundary) {
         return (n + boundary) % boundary;
     }
 
-    inline void LifeGamev2::changeSetting(char cmd) {
+    inline void LifeGamev3::changeSetting(char cmd) {
         switch (cmd) {
             case FASTER:
                 ++SPEED;
@@ -125,25 +140,29 @@ namespace LifeGamev2 {
         }
     }
 
-    inline bool LifeGamev2::isAlive(const int x, const int y) {
-        return (*puniverse)[y][x] >= 128;
+    inline bool LifeGamev3::isAlive(const int x, const int y, unsigned color) {
+        return (*puniverse)[y][x].rgb[color] >= 128;
     }
 
-    inline void LifeGamev2::die(const int x, const int y) {
-        (*p_universe)[y][x] -= min((*p_universe)[y][x], 4);
+    inline void LifeGamev3::die(const int x, const int y, unsigned color) {
+        //      (*p_universe)[y][x].rgb[color] -= min((*p_universe)[y][x].rgb[color], 4);
+        (*p_universe)[y][x].rgb[color] /= 2;
     }
 
-    inline void LifeGamev2::reAlive(const int x, const int y) {
-        (*p_universe)[y][x] += min(255 - (*p_universe)[y][x], 4);
+    inline void LifeGamev3::reAlive(const int x, const int y, unsigned color) {
+        //      (*p_universe)[y][x].rgb[color] += min(255 - (*p_universe)[y][x].rgb[color], 4);
+        (*p_universe)[y][x].rgb[color] *= 2;
     }
 
-    inline void LifeGamev2::render() {
-        static Grayscale scale;
+    inline void LifeGamev3::render() {
+        static Color r, g, b;
 
         for (unsigned y = 0; y < ROW; ++y)
             for (unsigned x = 0; x < COL; ++x) {
-                scale = (*puniverse)[y][x];
-                setfillcolor(EGERGB(scale, scale, scale));
+                r = (*puniverse)[y][x].rgb[R];
+                g = (*puniverse)[y][x].rgb[G];
+                b = (*puniverse)[y][x].rgb[B];
+                setfillcolor(EGERGB(r, g, b));
                 bar(12 * x, 12 * y, 12 * x + 12, 12 * y + 12);
                 //              (xl, yt, xr, yb);
             }
