@@ -136,7 +136,7 @@ namespace LifeGamev1 {
 
         for (unsigned y = 0; y < ROW; ++y)
             for (unsigned x = 0; x < COL; ++x) {
-                setfillcolor((*puniverse)[y][x] ? BLACK : WHITE);
+                setfillcolor((*puniverse)[y][x] ? WHITE : BLACK);
                 bar(12 * x, 12 * y, 12 * x + 12, 12 * y + 12);
                 //              (xl, yt, xr, yb);
             }

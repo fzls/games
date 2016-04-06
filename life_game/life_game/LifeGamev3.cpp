@@ -74,24 +74,21 @@ namespace LifeGamev3 {
     }
 
     inline void LifeGamev3::init(std::vector<std::vector<RGB_>> &universe) {
-        int cnt = 0;
         Color r, g, b;
 
         for (auto &line : universe) {
             for (auto &u : line) {
-                r = myRandom() % 128;//default alive
+                r = myRandom() % 128;//default dead
                 g = myRandom() % 128;
                 b = myRandom() % 128;
 
-                if (cnt++ >= DENSITY) {//100-denisty % is dead
+                if (myRandom() % 100 < DENSITY) {//denisty % is alive
                     r += 128;
                     g += 128;
                     b += 128;
                 }
 
                 u = std::move(RGB_(r, g, b));
-
-                if (cnt == 100) { cnt = 0; }
             }
         }
     }

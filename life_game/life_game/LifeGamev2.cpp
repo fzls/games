@@ -68,15 +68,11 @@ namespace LifeGamev2 {
     }
 
     inline void LifeGamev2::init(std::vector<std::vector<Grayscale>> &universe) {
-        int cnt = 0;
-
         for (auto &line : universe) {
             for (auto &u : line) {
                 u = myRandom() % 128;
 
-                if(cnt++ >= DENSITY) { u = 128 + myRandom() % 128; } //more white
-
-                if (cnt == 100) { cnt = 0; }
+                if(myRandom() % 100 < DENSITY) { u = 128 + myRandom() % 128; }
             }
         }
     }
